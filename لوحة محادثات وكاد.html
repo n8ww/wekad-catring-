@@ -1,0 +1,470 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>لوحة محادثات وكاد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: عمود واحد من أقسام معنونة، كل قسم شبكة بطاقات تنهار لعمود عند عرض الجوال */
+:root{
+  --bg:#f7f6f3; --surface:#fdfdfc; --ink:#14120f; --ink-2:#56524b; --ink-3:#8b867c;
+  --line:#e3e0d8; --rule:#c8c4ba;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s7:#4a3aa7;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b; --serious:#ec835a;
+  --ring:rgba(20,18,15,.10);
+  --display:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --body:"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#100f0d; --surface:#1a1917; --ink:#ffffff; --ink-2:#c5c0b5; --ink-3:#8b867c;
+  --line:#2c2b28; --rule:#3a3835;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s7:#9085e9;
+  --ring:rgba(255,255,255,.10);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#100f0d; --surface:#1a1917; --ink:#ffffff; --ink-2:#c5c0b5; --ink-3:#8b867c;
+  --line:#2c2b28; --rule:#3a3835;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s7:#9085e9;
+  --ring:rgba(255,255,255,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.65;direction:rtl;text-align:right;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;margin:0}
+h1{font-size:clamp(26px,4.6vw,40px);line-height:1.25;letter-spacing:-.01em}
+h2{font-size:clamp(18px,2.6vw,23px);line-height:1.35}
+h3{font-size:15px;font-weight:500}
+p{margin:0}
+.sub{color:var(--ink-2);font-size:15px;max-width:62ch;margin-top:10px}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;
+  font-weight:600;font-family:var(--body)}
+
+header.top{border-bottom:1px solid var(--rule);padding-bottom:22px;margin-bottom:34px}
+.metaline{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;font-size:13px;color:var(--ink-3)}
+.metaline span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--s2);flex:none}
+
+section{margin-top:46px}
+.sechead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.sechead .note{font-size:13px;color:var(--ink-3)}
+.secrule{height:1px;background:var(--line);margin:14px 0 20px}
+
+.grid{display:grid;gap:14px}
+.k5{grid-template-columns:repeat(5,1fr)}
+.k4{grid-template-columns:repeat(4,1fr)}
+.c2{grid-template-columns:1fr 1fr}
+@media(max-width:860px){.k5,.k4{grid-template-columns:repeat(2,1fr)}.c2{grid-template-columns:1fr}}
+@media(max-width:430px){.k5,.k4{grid-template-columns:1fr}}
+
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 16px 14px;min-width:0}
+.tile .lbl{font-size:12.5px;color:var(--ink-3);font-weight:500}
+.tile .val{font-family:var(--display);font-size:30px;line-height:1.1;margin-top:8px;letter-spacing:-.02em}
+.tile .foot{font-size:12.5px;color:var(--ink-2);margin-top:7px}
+.tile.flag{border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}
+.tile.flag .val{color:var(--crit)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.panel h3{margin-bottom:2px}
+.panel .cap{font-size:12.5px;color:var(--ink-3);margin-bottom:14px}
+figure{margin:0}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.tick{font-size:10.5px;fill:var(--ink-3);font-family:var(--body)}
+.vlabel{font-size:11px;fill:var(--ink-2);font-family:var(--body);font-variant-numeric:tabular-nums}
+.gridline{stroke:var(--line);stroke-width:1}
+.axis{stroke:var(--rule);stroke-width:1}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-2);margin-top:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-start:6px;vertical-align:-1px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
+th{font-size:12px;color:var(--ink-3);font-weight:600;white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.scrollx{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+.bar-row{display:grid;grid-template-columns:minmax(118px,auto) 1fr 52px;gap:10px;align-items:center;margin-bottom:9px;font-size:13.5px}
+.bar-track{background:color-mix(in srgb,var(--ink) 7%,transparent);border-radius:4px;height:16px;position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-val{font-variant-numeric:tabular-nums;color:var(--ink-2);font-size:12.5px;text-align:left}
+
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--ring);color:var(--ink-2);background:color-mix(in srgb,var(--ink) 4%,transparent)}
+.pill.bad{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 45%,transparent);
+  background:color-mix(in srgb,var(--crit) 10%,transparent)}
+.pill.ok{color:var(--good);border-color:color-mix(in srgb,var(--good) 45%,transparent);
+  background:color-mix(in srgb,var(--good) 10%,transparent)}
+
+ol.recs{list-style:none;counter-reset:r;padding:0;margin:0;display:grid;gap:12px}
+ol.recs li{counter-increment:r;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:15px 16px;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
+ol.recs li::before{content:counter(r);font-family:var(--display);font-size:15px;color:var(--s2);
+  border:1px solid color-mix(in srgb,var(--s2) 40%,transparent);border-radius:6px;
+  width:28px;height:28px;display:grid;place-items:center;line-height:1}
+ol.recs b{font-weight:600;display:block;margin-bottom:3px}
+ol.recs p{font-size:13.5px;color:var(--ink-2)}
+
+footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3)}
+.tipbox{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--rule);
+  border-radius:7px;padding:7px 10px;font-size:12.5px;color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.14);
+  z-index:50;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tipbox[hidden]{display:none}
+:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.bar-fill{transition:width .4s ease}}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">شركة قهوة وكاد · واتساب الأعمال</p>
+  <h1>لوحة تحليل محادثات وكاد</h1>
+  <p class="sub">قراءة كاملة لـ ٨٩٥ محادثة و ٩٬٧٨٩ رسالة بين ٦ يوليو و ٤ أكتوبر ٢٠٢٦ — من دخل القناة، وكم انتظر، وفي أي شيء سأل، وأين ضاعت الفرص.</p>
+  <div class="metaline">
+    <span><i class="dot"></i> رقم الحساب ‎+966 55 248 7363</span>
+    <span>٩١ يوماً من النشاط</span>
+    <span>٤٢٪ من الرسائل من وكاد · ٥٨٪ من العملاء</span>
+  </div>
+</header>
+
+<section id="kpi">
+  <div class="sechead"><h2>المؤشرات الرئيسية</h2></div>
+  <div class="secrule"></div>
+  <div class="grid k5" id="kpis"></div>
+</section>
+
+<section>
+  <div class="sechead"><h2>النمو عبر الزمن</h2><span class="note">عدد الرسائل اليومي ومحادثات جديدة شهرياً</span></div>
+  <div class="secrule"></div>
+  <div class="panel">
+    <h3>حجم الرسائل اليومي</h3>
+    <p class="cap">كل نقطة يوم واحد. الخط الفاتح متوسط متحرك ٧ أيام.</p>
+    <figure id="chart-daily"></figure>
+    <div class="legend"><span><i style="background:var(--s1)"></i>رسائل اليوم</span><span><i style="background:var(--s2)"></i>متوسط ٧ أيام</span></div>
+  </div>
+  <div class="grid c2" style="margin-top:14px">
+    <div class="panel">
+      <h3>محادثات جديدة كل شهر</h3>
+      <p class="cap">عميل يفتح محادثة لأول مرة. أكتوبر جزئي (٤ أيام).</p>
+      <div id="bars-newchats"></div>
+    </div>
+    <div class="panel">
+      <h3>حجم الرسائل حسب يوم الأسبوع</h3>
+      <p class="cap">إجمالي الرسائل المتبادلة على مدار الفترة.</p>
+      <div id="bars-weekday"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><h2>ساعات الذروة</h2><span class="note">متى يكتب العميل، ومتى يتأخر الرد</span></div>
+  <div class="secrule"></div>
+  <div class="panel">
+    <h3>رسائل العملاء حسب ساعة اليوم</h3>
+    <p class="cap">توقيت السعودية. الأعمدة المميزة هي نافذة الذروة.</p>
+    <figure id="chart-hourly"></figure>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h3>وسيط زمن الرد حسب ساعة وصول الرسالة</h3>
+    <p class="cap">بالدقائق. القيم المرتفعة تعني رسائل وصلت خارج ساعات العمل وانتظرت حتى الصباح.</p>
+    <figure id="chart-resph"></figure>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><h2>سرعة الاستجابة</h2><span class="note">٢٬١٣٩ حالة رد محسوبة</span></div>
+  <div class="secrule"></div>
+  <div class="grid c2">
+    <div class="panel">
+      <h3>توزيع زمن الرد</h3>
+      <p class="cap">المدة بين آخر رسالة من العميل وأول رد من وكاد.</p>
+      <div id="bars-resp"></div>
+    </div>
+    <div class="panel">
+      <h3>وسيط الرد حسب يوم الأسبوع</h3>
+      <p class="cap">بالدقائق. الجمعة أبطأ يوم بفارق كبير.</p>
+      <div id="bars-respwd"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><h2>مواضيع المحادثات</h2><span class="note">تصنيف آلي بالكلمات المفتاحية · المحادثة قد تحمل أكثر من موضوع</span></div>
+  <div class="secrule"></div>
+  <div class="panel">
+    <h3>نسبة المحادثات التي تطرقت لكل موضوع</h3>
+    <p class="cap">من أصل ٨٩٥ محادثة. ١٢٣ محادثة لم تُصنّف (تحية أو رسالة مفردة).</p>
+    <div id="bars-cats"></div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><h2>مسار التحويل والفرص الضائعة</h2></div>
+  <div class="secrule"></div>
+  <div class="grid c2">
+    <div class="panel">
+      <h3>من محادثة واردة إلى صفقة</h3>
+      <p class="cap">مؤشر الصفقة = ذكر تحويل أو فاتورة أو عربون أو آيبان أو اعتماد عرض.</p>
+      <figure id="chart-funnel"></figure>
+    </div>
+    <div class="panel">
+      <h3>المحادثات بلا رد إطلاقاً — حسب الموضوع</h3>
+      <p class="cap">١٨٥ محادثة لم تتلقَّ أي رد من وكاد.</p>
+      <div id="bars-lost"></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h3>أكبر المحادثات المهملة</h3>
+    <p class="cap">عملاء كتبوا عدة رسائل ولم يصلهم أي رد — أولوية للمتابعة اليدوية.</p>
+    <div class="scrollx"><table id="tbl-lost"></table></div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><h2>إشارات الطلبات والأرقام المذكورة</h2><span class="note">مستخرجة من نص الرسائل</span></div>
+  <div class="secrule"></div>
+  <div class="grid k4" id="order-tiles"></div>
+  <div class="grid c2" style="margin-top:14px">
+    <div class="panel">
+      <h3>أنواع الوسائط المرسلة</h3>
+      <p class="cap">١٬٨٠١ ملف داخل المحادثات — أغلبها عروض أسعار وسير ذاتية.</p>
+      <div id="bars-media"></div>
+    </div>
+    <div class="panel">
+      <h3>أنشط المحادثات</h3>
+      <p class="cap">عدد الرسائل المتبادلة في كل محادثة.</p>
+      <div class="scrollx"><table id="tbl-top"></table></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><h2>ما الذي يستحق التنفيذ</h2></div>
+  <div class="secrule"></div>
+  <ol class="recs">
+    <li><div><b>فصل قناة التوظيف عن قناة البيع</b><p>٢٢٪ من المحادثات (٢٠١ محادثة) طلبات وظائف وسير ذاتية، وهي أكبر مصدر للمحادثات المهملة (٦٨ من ١٨٥). رسالة ترحيب آلية تحوّل المتقدمين لنموذج توظيف تفرغ صندوق المبيعات فوراً.</p></div></li>
+    <li><div><b>تغطية نافذة ١٠ص – ٥م بوردية مخصصة</b><p>٧٠٪ من رسائل العملاء تصل في هذه النافذة، ووسيط الرد داخلها ١١–٢٦ دقيقة. خارجها يقفز الوسيط لساعات. المشكلة ليست البطء، بل التغطية.</p></div></li>
+    <li><div><b>معالجة الجمعة</b><p>وسيط الرد يوم الجمعة ٩٧ دقيقة مقابل ٢١ دقيقة يوم الخميس — أبطأ يوم رغم أنه أخف يوم في الحجم. رد آلي يحدد وقت العودة أرخص من وردية كاملة.</p></div></li>
+    <li><div><b>قائمة أسعار جاهزة للكيترنق</b><p>الكيترنق حاضر في ٤٦٪ من المحادثات والسعر في ٣٧٪. وسيط الطلب ١٠٠ كوب / ١٠٠ شخص. بطاقة أسعار بشرائح ثابتة (٥٠ / ١٠٠ / ٢٠٠ كوب) تختصر معظم الحوار المتكرر.</p></div></li>
+    <li><div><b>متابعة الـ ٤٣٧ رسالة المعلّقة</b><p>٤٣٧ مرة انتهت فيها المحادثة برسالة عميل بلا رد. حتى لو تحوّل ٥٪ منها فقط، فهي أرخص قناة مبيعات متاحة الآن.</p></div></li>
+    <li><div><b>تثبيت مؤشر إتمام الصفقة</b><p>٣٣ محادثة فقط تحمل أثراً واضحاً للإغلاق (٣٫٧٪)، لأن الإغلاق غالباً يتم خارج واتساب. ترقيم الطلبات داخل المحادثة يجعل القناة قابلة للقياس فعلياً.</p></div></li>
+  </ol>
+</section>
+
+<footer>
+  مبني على ملف <span style="font-variant-numeric:tabular-nums">WhatsApp_All_Chats.xlsx</span> — ٨٩٥ ورقة، ٩٬٧٨٩ رسالة بعد تنظيف الصفوف الفارغة. التصنيف الموضوعي آلي بالكلمات المفتاحية وقابل للخطأ في الحالات الحدية؛ أزمنة الرد محسوبة من أول رد يلي آخر رسالة عميل متصلة.
+</footer>
+</div>
+
+<div class="tipbox" id="tip" hidden></div>
+
+<script id="data" type="application/json">{"total_chats": 895, "total_msgs": 9789, "biz_msgs": 4166, "cust_msgs": 5623, "resp_median": 37.0, "resp_count": 2139, "resp_dist": [{"label": "<5 د", "n": 740}, {"label": "5-15 د", "n": 162}, {"label": "15-60 د", "n": 266}, {"label": "1-3 س", "n": 224}, {"label": "3-12 س", "n": 213}, {"label": "12-24 س", "n": 230}, {"label": ">24 س", "n": 304}], "never_answered": 185, "never_list": [{"chat": "Catering Wekad", "n": 53, "first": "2026-09-27 18:34:32"}, {"chat": "+880 1884-416653", "n": 11, "first": "2026-08-15 13:42:34"}, {"chat": "+966 56 073 0907", "n": 9, "first": "2026-08-09 14:57:42"}, {"chat": "+966 56 846 6144", "n": 8, "first": "2026-09-04 20:13:52"}, {"chat": "+966 54 717 0413", "n": 7, "first": "2026-08-02 16:01:14"}, {"chat": "+966 55 457 1980", "n": 7, "first": "2026-09-02 15:09:15"}, {"chat": "+1 (203) 594-8956", "n": 6, "first": "2026-08-02 15:17:41"}, {"chat": "+966 50 930 8373", "n": 6, "first": "2026-08-25 06:39:55"}, {"chat": "+966 53 482 2856", "n": 6, "first": "2026-07-23 19:25:50"}, {"chat": "+966 53 763 8570", "n": 6, "first": "2026-08-02 16:37:04"}, {"chat": "+966 59 156 3344", "n": 6, "first": "2026-07-25 17:57:16"}, {"chat": "مطبعة للدعاية والإعلان", "n": 6, "first": "2026-08-12 18:38:30"}, {"chat": "+250 784 468 407", "n": 5, "first": "2026-08-06 23:39:54"}, {"chat": "+966 50 120 9560", "n": 5, "first": "2026-07-26 16:57:05"}, {"chat": "+966 54 510 4287", "n": 5, "first": "2026-08-03 16:13:51"}, {"chat": "+966 56 330 6068", "n": 5, "first": "2026-08-18 11:48:18"}, {"chat": "+966 56 566 5904", "n": 5, "first": "2026-08-23 09:39:18"}, {"chat": "+966 59 939 8200", "n": 5, "first": "2026-08-16 11:15:03"}, {"chat": "+966 50 615 4053", "n": 4, "first": "2026-07-25 15:42:20"}, {"chat": "+966 50 770 7674", "n": 4, "first": "2026-09-08 11:01:12"}, {"chat": "+966 53 591 6945", "n": 4, "first": "2026-08-02 11:54:11"}, {"chat": "+966 54 671 9404", "n": 4, "first": "2026-08-05 12:43:40"}, {"chat": "+966 54 784 0058", "n": 4, "first": "2026-08-24 17:53:55"}, {"chat": "+966 54 798 7417", "n": 4, "first": "2026-08-16 10:26:59"}, {"chat": "+966 55 186 3910", "n": 4, "first": "2026-09-07 13:01:55"}, {"chat": "+966 56 590 0932", "n": 4, "first": "2026-07-26 20:44:33"}, {"chat": "+966 59 930 5396", "n": 4, "first": "2026-07-27 23:10:05"}, {"chat": "+961 70 924 202", "n": 3, "first": "2026-08-02 14:07:40"}, {"chat": "+963 968 148 194", "n": 3, "first": "2026-08-05 18:23:22"}, {"chat": "+966 50 136 3547", "n": 3, "first": "2026-08-24 01:37:27"}, {"chat": "+966 50 243 3848", "n": 3, "first": "2026-09-06 20:39:02"}, {"chat": "+966 50 285 5026", "n": 3, "first": "2026-08-24 22:30:14"}, {"chat": "+966 50 287 3342", "n": 3, "first": "2026-08-25 16:44:28"}, {"chat": "+966 50 541 2751", "n": 3, "first": "2026-07-26 16:54:19"}, {"chat": "+966 50 657 2311", "n": 3, "first": "2026-08-06 07:44:13"}, {"chat": "+966 50 863 6381", "n": 3, "first": "2026-08-24 11:45:47"}, {"chat": "+966 50 912 2714", "n": 3, "first": "2026-07-27 17:18:59"}, {"chat": "+966 51 001 9381", "n": 3, "first": "2026-08-06 11:40:34"}, {"chat": "+966 53 062 4326", "n": 3, "first": "2026-09-06 22:49:48"}, {"chat": "+966 53 239 4929", "n": 3, "first": "2026-07-28 20:44:16"}], "top_chats": [{"chat": "رهف", "n": 835}, {"chat": "+966 59 686 0602", "n": 428}, {"chat": "+966 55 666 2479", "n": 276}, {"chat": "كيترنق18_سبتمبر", "n": 261}, {"chat": "ZEHAYA~ عنك 23", "n": 236}, {"chat": "تغطيات منال", "n": 214}, {"chat": "+966 56 970 3744", "n": 202}, {"chat": "+966 55 005 5751", "n": 181}, {"chat": "+966 56 705 1924", "n": 142}, {"chat": "Assail ", "n": 110}, {"chat": "Seham 4 اكتوبر", "n": 103}, {"chat": "كيترنق شركة ريتال وهذي الشركة ا", "n": 96}, {"chat": "+966 50 738 8799", "n": 89}, {"chat": "+966 53 857 8128", "n": 87}, {"chat": "‪+966550741712‬", "n": 85}, {"chat": "+966 53 584 8594", "n": 78}, {"chat": "Meroo حجز 27_11نوفمبر كيترنق", "n": 73}, {"chat": "استاذة فاطمه7 سبتمبر لقاء دعم ا", "n": 64}, {"chat": "+966 57 943 9987", "n": 63}, {"chat": "زوايا الخبر ( افضل تغطيات)", "n": 62}, {"chat": "Catering Wekad", "n": 53}, {"chat": "Walaa كيترنق وكاد تاريخ٢٥_٩", "n": 53}, {"chat": "تغطيات امجاد ", "n": 53}, {"chat": "تغطيات فلافور الخبر", "n": 51}, {"chat": "Nada شركة هنكل الصناعية تاريخ 2", "n": 51}], "media": {"document": 1061, "image": 447, "sticker": 122, "video": 77, "recorded audio": 73, "forwarded audio": 20, "interactive": 1}, "monthly_new": [{"m": "2026-07", "n": 109}, {"m": "2026-08", "n": 327}, {"m": "2026-09", "n": 423}, {"m": "2026-10", "n": 36}], "weekday": [2113, 1586, 1645, 1110, 574, 1178, 1583], "resp_by_wd": [28.0, 40.2, 25.1, 20.9, 97.4, 31.3, 62.5], "cat_counts": [{"cat": "كيترنق / خدمة فعاليات", "n": 412, "pct": 46.0}, {"cat": "أسعار وعروض", "n": 333, "pct": 37.2}, {"cat": "منتجات القهوة / البن", "n": 252, "pct": 28.2}, {"cat": "توظيف / سير ذاتية", "n": 201, "pct": 22.5}, {"cat": "استفسار عام", "n": 200, "pct": 22.3}, {"cat": "الموقع / الفروع", "n": 195, "pct": 21.8}, {"cat": "حجز / موعد", "n": 175, "pct": 19.6}, {"cat": "شراكة / توريد", "n": 143, "pct": 16.0}, {"cat": "طلب / شراء", "n": 126, "pct": 14.1}, {"cat": "شكوى / مشكلة", "n": 91, "pct": 10.2}], "unanswered_by_cat": [{"cat": "توظيف / سير ذاتية", "n": 68}, {"cat": "شراكة / توريد", "n": 30}, {"cat": "منتجات القهوة / البن", "n": 23}, {"cat": "استفسار عام", "n": 23}, {"cat": "كيترنق / خدمة فعاليات", "n": 19}, {"cat": "أسعار وعروض", "n": 16}, {"cat": "الموقع / الفروع", "n": 12}, {"cat": "طلب / شراء", "n": 8}, {"cat": "حجز / موعد", "n": 5}], "daily": [{"d": "2026-07-06", "n": 2}, {"d": "2026-07-12", "n": 1}, {"d": "2026-07-13", "n": 2}, {"d": "2026-07-15", "n": 31}, {"d": "2026-07-16", "n": 25}, {"d": "2026-07-17", "n": 4}, {"d": "2026-07-18", "n": 20}, {"d": "2026-07-19", "n": 14}, {"d": "2026-07-20", "n": 268}, {"d": "2026-07-21", "n": 132}, {"d": "2026-07-22", "n": 97}, {"d": "2026-07-23", "n": 31}, {"d": "2026-07-25", "n": 28}, {"d": "2026-07-26", "n": 55}, {"d": "2026-07-27", "n": 71}, {"d": "2026-07-28", "n": 26}, {"d": "2026-07-29", "n": 26}, {"d": "2026-07-30", "n": 23}, {"d": "2026-07-31", "n": 18}, {"d": "2026-08-01", "n": 9}, {"d": "2026-08-02", "n": 164}, {"d": "2026-08-03", "n": 113}, {"d": "2026-08-04", "n": 16}, {"d": "2026-08-05", "n": 73}, {"d": "2026-08-06", "n": 67}, {"d": "2026-08-07", "n": 24}, {"d": "2026-08-08", "n": 22}, {"d": "2026-08-09", "n": 45}, {"d": "2026-08-10", "n": 54}, {"d": "2026-08-11", "n": 99}, {"d": "2026-08-12", "n": 98}, {"d": "2026-08-13", "n": 69}, {"d": "2026-08-14", "n": 75}, {"d": "2026-08-15", "n": 71}, {"d": "2026-08-16", "n": 152}, {"d": "2026-08-17", "n": 240}, {"d": "2026-08-18", "n": 161}, {"d": "2026-08-19", "n": 185}, {"d": "2026-08-20", "n": 111}, {"d": "2026-08-21", "n": 23}, {"d": "2026-08-22", "n": 80}, {"d": "2026-08-23", "n": 77}, {"d": "2026-08-24", "n": 169}, {"d": "2026-08-25", "n": 143}, {"d": "2026-08-26", "n": 131}, {"d": "2026-08-27", "n": 138}, {"d": "2026-08-28", "n": 127}, {"d": "2026-08-29", "n": 231}, {"d": "2026-08-30", "n": 235}, {"d": "2026-08-31", "n": 295}, {"d": "2026-09-01", "n": 150}, {"d": "2026-09-02", "n": 164}, {"d": "2026-09-03", "n": 147}, {"d": "2026-09-04", "n": 54}, {"d": "2026-09-05", "n": 175}, {"d": "2026-09-06", "n": 176}, {"d": "2026-09-07", "n": 194}, {"d": "2026-09-08", "n": 145}, {"d": "2026-09-09", "n": 128}, {"d": "2026-09-10", "n": 160}, {"d": "2026-09-11", "n": 29}, {"d": "2026-09-12", "n": 96}, {"d": "2026-09-13", "n": 159}, {"d": "2026-09-14", "n": 194}, {"d": "2026-09-15", "n": 166}, {"d": "2026-09-16", "n": 147}, {"d": "2026-09-17", "n": 118}, {"d": "2026-09-18", "n": 83}, {"d": "2026-09-19", "n": 225}, {"d": "2026-09-20", "n": 193}, {"d": "2026-09-21", "n": 236}, {"d": "2026-09-22", "n": 261}, {"d": "2026-09-23", "n": 209}, {"d": "2026-09-24", "n": 94}, {"d": "2026-09-25", "n": 56}, {"d": "2026-09-26", "n": 185}, {"d": "2026-09-27", "n": 262}, {"d": "2026-09-28", "n": 275}, {"d": "2026-09-29", "n": 287}, {"d": "2026-09-30", "n": 356}, {"d": "2026-10-01", "n": 127}, {"d": "2026-10-02", "n": 81}, {"d": "2026-10-03", "n": 36}, {"d": "2026-10-04", "n": 50}], "hourly_cust": [67, 119, 34, 37, 59, 34, 44, 48, 75, 110, 354, 583, 468, 472, 489, 551, 536, 297, 224, 205, 248, 203, 145, 221], "resp_by_hour": [563.1, 452.7, 481.1, 461.6, 396.9, 342.0, 271.3, 80.7, 81.3, 62.2, 12.0, 12.3, 22.5, 25.8, 21.3, 13.6, 11.0, 399.0, 923.0, 145.3, 18.6, 188.6, 123.4, 87.3], "funnel": [{"k": "محادثات واردة", "v": 895}, {"k": "تم الرد عليها", "v": 710}, {"k": "حوار متبادل (3+ رسائل)", "v": 709}, {"k": "نقاش ممتد (6+ رسائل)", "v": 352}, {"k": "مؤشرات إتمام صفقة", "v": 33}], "amount_count": 59, "amount_median": 699.0, "amount_sum": 56923.0, "cups": {"n": 133, "sum": 15603, "median": 100}, "persons": {"n": 106, "sum": 13247, "median": 100}, "repeat_customers": 188, "one_day_only": 465}</script>
+<script>
+(function(){
+const D = JSON.parse(document.getElementById('data').textContent);
+const AR = n => new Intl.NumberFormat('ar-EG').format(n);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ---------- tooltip ---------- */
+const tip = document.getElementById('tip');
+function showTip(e, html){ tip.innerHTML = html; tip.hidden = false;
+  const r = tip.getBoundingClientRect();
+  let x = e.clientX - r.width/2, y = e.clientY - r.height - 12;
+  x = Math.max(8, Math.min(x, innerWidth - r.width - 8)); if(y < 8) y = e.clientY + 16;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+}
+function hideTip(){ tip.hidden = true; }
+function hoverable(el, html){
+  el.style.cursor='default';
+  el.addEventListener('pointermove', e=>showTip(e, html));
+  el.addEventListener('pointerleave', hideTip);
+}
+
+/* ---------- KPI tiles ---------- */
+const kpis = [
+  {l:'محادثة واردة', v:AR(D.total_chats), f:'٨٩ محادثة جديدة في الأسبوع الأخير'},
+  {l:'رسالة متبادلة', v:AR(D.total_msgs), f:AR(D.cust_msgs)+' من العملاء · '+AR(D.biz_msgs)+' من وكاد'},
+  {l:'وسيط زمن الرد', v:AR(D.resp_median)+' د', f:'٤٢٪ من الردود خلال ٥ دقائق'},
+  {l:'نسبة المحادثات المجابة', v:Math.round(710/D.total_chats*100)+'٪', f:'٧١٠ من ٨٩٥ محادثة'},
+  {l:'محادثة بلا أي رد', v:AR(D.never_answered), f:'فرص ضائعة مؤكدة', flag:true},
+];
+document.getElementById('kpis').innerHTML = kpis.map(k=>
+  `<div class="tile${k.flag?' flag':''}"><div class="lbl">${k.l}</div><div class="val">${k.v}</div><div class="foot">${k.f}</div></div>`).join('');
+
+const ot = [
+  {l:'مبالغ بالريال ذُكرت نصاً', v:AR(D.amount_count), f:'وسيط '+AR(Math.round(D.amount_median))+' ر.س · إجمالي '+AR(Math.round(D.amount_sum))+' ر.س'},
+  {l:'أكواب مطلوبة (مجموع)', v:AR(D.cups.sum), f:'في '+AR(D.cups.n)+' طلب · وسيط '+AR(D.cups.median)+' كوب'},
+  {l:'عدد الحضور المذكور', v:AR(D.persons.sum), f:'في '+AR(D.persons.n)+' فعالية · وسيط '+AR(D.persons.median)+' شخص'},
+  {l:'عملاء عادوا ٣ أيام أو أكثر', v:AR(D.repeat_customers), f:AR(D.one_day_only)+' محادثة انتهت في يوم واحد'},
+];
+document.getElementById('order-tiles').innerHTML = ot.map(k=>
+  `<div class="tile"><div class="lbl">${k.l}</div><div class="val">${k.v}</div><div class="foot">${k.f}</div></div>`).join('');
+
+/* ---------- horizontal bar lists ---------- */
+function barList(id, items, color){
+  const max = Math.max(...items.map(i=>i.v)) || 1;
+  const host = document.getElementById(id);
+  host.innerHTML = items.map(i=>
+    `<div class="bar-row"><span>${i.l}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:${(i.v/max*100).toFixed(1)}%;background:${i.c||color}"></span></span>
+      <span class="bar-val">${i.d||AR(i.v)}</span></div>`).join('');
+  [...host.querySelectorAll('.bar-row')].forEach((row,idx)=>hoverable(row, items[idx].t || (items[idx].l+' — '+AR(items[idx].v))));
+}
+
+barList('bars-newchats', D.monthly_new.map(m=>({l:{'2026-07':'يوليو','2026-08':'أغسطس','2026-09':'سبتمبر','2026-10':'أكتوبر'}[m.m], v:m.n})), 'var(--s1)');
+
+const WD=['الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'];
+barList('bars-weekday', D.weekday.map((n,i)=>({l:WD[i], v:n, c: i===4?'var(--s2)':'var(--s1)'})), 'var(--s1)');
+
+barList('bars-resp', D.resp_dist.map((r,i)=>({l:r.label, v:r.n,
+  d:AR(r.n)+' ('+Math.round(r.n/D.resp_count*100)+'٪)',
+  c: i<=1?'var(--good)': i<=3?'var(--s1)': i===4?'var(--warn)':'var(--crit)',
+  t:r.label+' — '+AR(r.n)+' رد، '+Math.round(r.n/D.resp_count*100)+'٪ من الحالات'})), 'var(--s1)');
+
+barList('bars-respwd', D.resp_by_wd.map((v,i)=>({l:WD[i], v:Math.round(v), d:AR(Math.round(v))+' د',
+  c: v>60?'var(--crit)': v>35?'var(--warn)':'var(--s3)',
+  t:WD[i]+' — وسيط '+AR(Math.round(v))+' دقيقة'})), 'var(--s3)');
+
+barList('bars-cats', D.cat_counts.map(c=>({l:c.cat, v:c.n, d:c.pct+'٪',
+  t:c.cat+' — '+AR(c.n)+' محادثة ('+c.pct+'٪)'})), 'var(--s2)');
+
+barList('bars-lost', D.unanswered_by_cat.map(c=>({l:c.cat, v:c.n,
+  t:c.cat+' — '+AR(c.n)+' محادثة بلا رد'})), 'var(--crit)');
+
+const MED={'document':'مستندات (PDF وغيرها)','image':'صور','sticker':'ملصقات','video':'فيديو','recorded audio':'رسائل صوتية','forwarded audio':'صوت معاد توجيهه','interactive':'رسائل تفاعلية'};
+barList('bars-media', Object.entries(D.media).map(([k,v])=>({l:MED[k]||k, v})), 'var(--s7)');
+
+/* ---------- tables ---------- */
+document.getElementById('tbl-lost').innerHTML =
+  '<thead><tr><th>المحادثة</th><th>عدد رسائل العميل</th><th>أول رسالة</th></tr></thead><tbody>' +
+  D.never_list.slice(0,14).map(r=>`<tr><td>${r.chat}</td><td class="num">${AR(r.n)}</td><td class="num">${r.first.slice(0,10)}</td></tr>`).join('') +
+  '</tbody>';
+
+document.getElementById('tbl-top').innerHTML =
+  '<thead><tr><th>المحادثة</th><th>الرسائل</th></tr></thead><tbody>' +
+  D.top_chats.slice(0,12).map(r=>`<tr><td>${r.chat}</td><td class="num">${AR(r.n)}</td></tr>`).join('') +
+  '</tbody>';
+
+/* ---------- SVG helpers ---------- */
+const NS='http://www.w3.org/2000/svg';
+function el(t,a){const n=document.createElementNS(NS,t);for(const k in a)n.setAttribute(k,a[k]);return n;}
+
+/* ---------- daily line chart ---------- */
+(function(){
+  const data = D.daily.map(d=>({d:new Date(d.d+'T00:00:00'), n:d.n}));
+  // fill missing days
+  const start=data[0].d, end=data[data.length-1].d, map=new Map(data.map(x=>[x.d.getTime(),x.n])), full=[];
+  for(let t=new Date(start); t<=end; t.setDate(t.getDate()+1)) full.push({d:new Date(t), n:map.get(t.getTime())||0});
+  const ma = full.map((_,i)=>{const s=full.slice(Math.max(0,i-6),i+1); return s.reduce((a,b)=>a+b.n,0)/s.length;});
+
+  const W=980,H=300,L=46,R=14,T=16,B=34, iw=W-L-R, ih=H-T-B;
+  const maxY = Math.ceil(Math.max(...full.map(f=>f.n))/50)*50;
+  const x = i => L + iw - (i/(full.length-1))*iw;   // RTL: oldest on right
+  const y = v => T + ih - (v/maxY)*ih;
+  const s = el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'حجم الرسائل اليومي'});
+
+  for(let g=0; g<=4; g++){ const v=maxY*g/4;
+    s.appendChild(el('line',{x1:L,x2:L+iw,y1:y(v),y2:y(v),class:'gridline'}));
+    const tx=el('text',{x:L+iw+8,y:y(v)+4,class:'tick','text-anchor':'start'}); tx.textContent=AR(v); s.appendChild(tx);
+  }
+  // area + line
+  let dPath='', aPath='';
+  full.forEach((f,i)=>{ dPath += (i?'L':'M')+x(i).toFixed(1)+' '+y(f.n).toFixed(1)+' '; });
+  aPath = dPath + `L${x(full.length-1).toFixed(1)} ${y(0)} L${x(0).toFixed(1)} ${y(0)} Z`;
+  s.appendChild(el('path',{d:aPath, fill:'var(--s1)', 'fill-opacity':'0.10', stroke:'none'}));
+  s.appendChild(el('path',{d:dPath, fill:'none', stroke:'var(--s1)','stroke-width':2,'stroke-linejoin':'round'}));
+  let mPath=''; ma.forEach((v,i)=>{ mPath += (i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)+' '; });
+  s.appendChild(el('path',{d:mPath, fill:'none', stroke:'var(--s2)','stroke-width':2,'stroke-dasharray':'5 4'}));
+  s.appendChild(el('line',{x1:L,x2:L+iw,y1:y(0),y2:y(0),class:'axis'}));
+
+  const MON={6:'يوليو',7:'أغسطس',8:'سبتمبر',9:'أكتوبر'};
+  full.forEach((f,i)=>{ if(f.d.getDate()===1){
+    s.appendChild(el('line',{x1:x(i),x2:x(i),y1:T,y2:y(0),stroke:'var(--rule)','stroke-width':1,'stroke-dasharray':'2 3'}));
+    const tx=el('text',{x:x(i),y:H-12,class:'tick','text-anchor':'middle'}); tx.textContent=MON[f.d.getMonth()]; s.appendChild(tx);
+  }});
+  // endpoint
+  const li=full.length-1;
+  s.appendChild(el('circle',{cx:x(li),cy:y(full[li].n),r:4.5,fill:'var(--s1)',stroke:'var(--surface)','stroke-width':2}));
+  // peak label
+  const pi = full.reduce((b,f,i)=> f.n>full[b].n?i:b, 0);
+  s.appendChild(el('circle',{cx:x(pi),cy:y(full[pi].n),r:4.5,fill:'var(--s2)',stroke:'var(--surface)','stroke-width':2}));
+  const pl=el('text',{x:x(pi),y:y(full[pi].n)-10,class:'vlabel','text-anchor':'middle'});
+  pl.textContent='ذروة '+AR(full[pi].n); s.appendChild(pl);
+
+  // hover band
+  const hov=el('rect',{x:L,y:T,width:iw,height:ih,fill:'transparent'});
+  const cross=el('line',{x1:0,x2:0,y1:T,y2:T+ih,stroke:'var(--rule)','stroke-width':1,opacity:0});
+  s.appendChild(cross); s.appendChild(hov);
+  hov.addEventListener('pointermove', e=>{
+    const box=s.getBoundingClientRect(), px=(e.clientX-box.left)/box.width*W;
+    let i = Math.round((L+iw-px)/iw*(full.length-1)); i=Math.max(0,Math.min(full.length-1,i));
+    cross.setAttribute('x1',x(i)); cross.setAttribute('x2',x(i)); cross.setAttribute('opacity',1);
+    const f=full[i];
+    showTip(e, `${f.d.toLocaleDateString('ar-EG',{day:'numeric',month:'long'})}<br>${AR(f.n)} رسالة · متوسط ٧ أيام ${AR(Math.round(ma[i]))}`);
+  });
+  hov.addEventListener('pointerleave', ()=>{cross.setAttribute('opacity',0); hideTip();});
+  document.getElementById('chart-daily').appendChild(s);
+})();
+
+/* ---------- hourly bars ---------- */
+function hourChart(hostId, vals, opts){
+  const W=980,H=opts.h||230,L=46,R=14,T=14,B=30, iw=W-L-R, ih=H-T-B;
+  const maxY = opts.max || Math.max(...vals.filter(v=>v!=null));
+  const bw = iw/24*0.74, step=iw/24;
+  const x = h => L + iw - (h+0.5)*step;
+  const y = v => T + ih - (v/maxY)*ih;
+  const s = el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':opts.label});
+  for(let g=0;g<=3;g++){ const v=maxY*g/3;
+    s.appendChild(el('line',{x1:L,x2:L+iw,y1:y(v),y2:y(v),class:'gridline'}));
+    const tx=el('text',{x:L+iw+8,y:y(v)+4,class:'tick','text-anchor':'start'}); tx.textContent=AR(Math.round(v)); s.appendChild(tx);
+  }
+  vals.forEach((v,h)=>{
+    if(v==null) return;
+    const hh = Math.max(2, y(0)-y(v));
+    const r = el('rect',{x:x(h)-bw/2, y:y(v), width:bw, height:hh, rx:4, fill:opts.color(v,h)});
+    s.appendChild(r);
+    hoverable(r, opts.tip(v,h));
+  });
+  s.appendChild(el('line',{x1:L,x2:L+iw,y1:y(0),y2:y(0),class:'axis'}));
+  [0,3,6,9,12,15,18,21,23].forEach(h=>{
+    const tx=el('text',{x:x(h),y:H-10,class:'tick','text-anchor':'middle'});
+    tx.textContent = h===0?'١٢ص': h<12? AR(h)+'ص' : h===12?'١٢م': AR(h-12)+'م';
+    s.appendChild(tx);
+  });
+  document.getElementById(hostId).appendChild(s);
+}
+hourChart('chart-hourly', D.hourly_cust, {
+  label:'رسائل العملاء حسب الساعة',
+  color:(v,h)=> (h>=10&&h<=16)?'var(--s2)':'var(--s1)',
+  tip:(v,h)=> `الساعة ${h}:00 — ${AR(v)} رسالة من العملاء`
+});
+hourChart('chart-resph', D.resp_by_hour.map(v=>v==null?null:Math.round(v)), {
+  h:210, max:1000,
+  label:'وسيط زمن الرد حسب الساعة',
+  color:(v)=> v<=30?'var(--good)': v<=120?'var(--warn)':'var(--crit)',
+  tip:(v,h)=> `رسائل وصلت الساعة ${h}:00 — وسيط الرد ${AR(v)} دقيقة`
+});
+
+/* ---------- funnel ---------- */
+(function(){
+  const f=D.funnel, W=620, rowH=54, gap=10, H=f.length*(rowH+gap)+10, L=8, R=8, iw=W-L-R;
+  const max=f[0].v;
+  const cols=['var(--s1)','var(--s1)','var(--s3)','var(--s4)','var(--s2)'];
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'مسار التحويل'});
+  f.forEach((st,i)=>{
+    const w = Math.max(70, st.v/max*iw), yy = i*(rowH+gap);
+    const r = el('rect',{x:W-R-w, y:yy, width:w, height:rowH-16, rx:5, fill:cols[i], 'fill-opacity':0.9});
+    s.appendChild(r);
+    hoverable(r, `${st.k} — ${AR(st.v)} محادثة (${Math.round(st.v/max*100)}٪ من الوارد)`);
+    const t1=el('text',{x:W-R-8, y:yy+ (rowH-16)/2 + 4.5, class:'vlabel','text-anchor':'end', fill:'#fff'});
+    t1.textContent = AR(st.v); s.appendChild(t1);
+    const t2=el('text',{x:W-R, y:yy+rowH+1, class:'tick','text-anchor':'end'});
+    t2.textContent = st.k + ' · ' + Math.round(st.v/max*100) + '٪'; s.appendChild(t2);
+  });
+  document.getElementById('chart-funnel').appendChild(s);
+})();
+})();
+</script>
+
+</body></html>
